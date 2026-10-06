@@ -2,709 +2,380 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width,initial-scale=1.0,
-               maximum-scale=1.0,user-scalable=no">
-
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Jaden Ninja Run</title>
 
 <style>
 *{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    -webkit-tap-highlight-color:transparent;
-    user-select:none;
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
 }
 
 html,body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    font-family:Arial,sans-serif;
-    background:#10182b;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#101a31;
+  font-family:Arial,sans-serif;
+  touch-action:none;
 }
 
 button{
-    border:0;
-    font:inherit;
-    touch-action:none;
+  font:inherit;
+  border:0;
+  touch-action:none;
 }
 
-/* ================= MENU ================= */
+#game{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  background:#74c9f5;
+}
 
-#menu{
-    position:fixed;
-    inset:0;
-    background:linear-gradient(#10182b,#263d61);
-    color:white;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    z-index:100;
+canvas{
+  display:block;
+  width:100%;
+  height:100%;
+  touch-action:none;
+}
+
+#hud{
+  position:fixed;
+  top:max(10px,env(safe-area-inset-top));
+  left:12px;
+  right:12px;
+  z-index:5;
+  display:flex;
+  justify-content:space-between;
+  color:white;
+  font-weight:900;
+  font-size:18px;
+  text-shadow:2px 2px 3px #101a31;
+  pointer-events:none;
+}
+
+.box{
+  background:#10203dcc;
+  padding:7px 12px;
+  border-radius:14px;
+}
+
+#controls{
+  position:fixed;
+  left:14px;
+  right:14px;
+  bottom:max(12px,env(safe-area-inset-bottom));
+  z-index:10;
+  display:flex;
+  justify-content:space-between;
+  pointer-events:none;
+}
+
+.side{
+  display:flex;
+  gap:10px;
+  pointer-events:auto;
+}
+
+.btn{
+  width:68px;
+  height:68px;
+  border:3px solid white;
+  border-radius:50%;
+  background:#17243dcc;
+  color:white;
+  font-size:30px;
+  font-weight:900;
+  box-shadow:0 4px 12px #0006;
+}
+
+#jump{
+  width:108px;
+  height:68px;
+  border-radius:36px;
+  background:#ffd43b;
+  color:#111;
+  font-size:19px;
+}
+
+#menu,
+#end{
+  position:fixed;
+  inset:0;
+  z-index:20;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:white;
+  background:linear-gradient(#101a31,#294d76);
 }
 
 #menu h1{
-    color:#ffd43b;
-    font-size:50px;
-    letter-spacing:5px;
+  font-size:clamp(42px,10vw,72px);
+  color:#ffd43b;
+  letter-spacing:5px;
+  text-shadow:4px 4px #111;
 }
 
 #menu h2{
-    margin:5px 0 25px;
-    letter-spacing:6px;
+  letter-spacing:6px;
+  margin:4px 0 15px;
 }
 
 #menu p{
-    color:#ccd3df;
-    margin-bottom:25px;
+  max-width:500px;
+  line-height:1.5;
+  color:#dce7f5;
+  margin:0 20px 22px;
 }
 
-#play{
-    width:260px;
-    height:70px;
-    border-radius:18px;
-    background:#ffd43b;
-    color:#111;
-    font-size:25px;
-    font-weight:bold;
+.big{
+  width:240px;
+  height:62px;
+  border-radius:18px;
+  background:#ffd43b;
+  color:#111;
+  font-size:23px;
+  font-weight:900;
+}
+
+#end h2{
+  font-size:40px;
+  margin-bottom:10px;
+}
+
+#end p{
+  margin-bottom:18px;
 }
 
 .hidden{
-    display:none!important;
+  display:none!important;
 }
 
-/* ================= JEU ================= */
+/* ÉCRAN PORTRAIT */
 
-#game{
-    position:fixed;
-    inset:0;
-    overflow:hidden;
-    background:
-        linear-gradient(#6cc7ff 0%,#bceaff 65%,#72c454 65%);
+#rotate{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:#101a31;
+  color:white;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:25px;
 }
 
-/* décor */
-
-.cloud{
-    position:absolute;
-    width:130px;
-    height:35px;
-    background:white;
-    opacity:.7;
-    border-radius:30px;
+#rotate .card{
+  max-width:390px;
+  background:#1d3153;
+  border:2px solid #4e6d97;
+  border-radius:24px;
+  padding:28px 22px;
+  box-shadow:0 12px 35px #0007;
 }
 
-.cloud:before,
-.cloud:after{
-    content:"";
-    position:absolute;
-    background:white;
-    border-radius:50%;
+#rotate .icon{
+  font-size:64px;
+  display:block;
+  margin-bottom:15px;
 }
 
-.cloud:before{
-    width:55px;
-    height:55px;
-    left:20px;
-    bottom:0;
+#rotate h2{
+  font-size:28px;
+  margin-bottom:10px;
 }
 
-.cloud:after{
-    width:65px;
-    height:65px;
-    right:15px;
-    bottom:0;
+#rotate p{
+  line-height:1.5;
+  color:#dbe7f5;
 }
 
-.c1{
-    top:12%;
-    left:10%;
-}
+/* Force le message en portrait */
 
-.c2{
-    top:22%;
-    left:65%;
-}
-
-/* ================= MONDE ================= */
-
-#world{
-    position:absolute;
-    left:0;
-    top:0;
-    width:5000px;
-    height:100%;
-}
-
-/* sol */
-
-.ground{
-    position:absolute;
-    left:0;
-    bottom:0;
-    width:5000px;
-    height:75px;
-
-    background:
-    repeating-linear-gradient(
-        45deg,
-        #267a36 0 25px,
-        #318c3f 25px 50px
-    );
-
-    border-top:6px solid #155323;
-}
-
-/* plateformes */
-
-.platform{
-    position:absolute;
-    height:28px;
-
-    background:
-    linear-gradient(
-        #965c2c,
-        #6b391c
-    );
-
-    border:4px solid #4b2716;
-    border-radius:7px;
-}
-
-/* blocs */
-
-.block{
-    position:absolute;
-    width:60px;
-    height:60px;
-
-    background:#e7a52e;
-
-    border:4px solid #a96d13;
-
-    border-radius:8px;
-
+@media (orientation:portrait){
+  #rotate{
     display:flex;
-    justify-content:center;
-    align-items:center;
-
-    font-size:28px;
+  }
 }
 
-/* ================= JOUEUR ================= */
-
-#player{
-    position:absolute;
-
-    width:55px;
-    height:70px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:48px;
-
-    z-index:20;
-}
-
-/* ================= PIECES ================= */
-
-.coin{
-    position:absolute;
-
-    width:30px;
-    height:30px;
-
-    border-radius:50%;
-
-    background:#ffd43b;
-
-    border:4px solid #d79500;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:15px;
-
-    animation:coin 0.6s infinite alternate;
-}
-
-@keyframes coin{
-    from{transform:scale(.85)}
-    to{transform:scale(1.1)}
-}
-
-/* ================= ENNEMIS ================= */
-
-.enemy{
-    position:absolute;
-
-    width:55px;
-    height:45px;
-
-    border-radius:20px 20px 10px 10px;
-
-    background:#c73737;
-
-    border:4px solid #751d1d;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:28px;
-
-    z-index:15;
-}
-
-/* ================= DRAPEAU ================= */
-
-.flag{
-    position:absolute;
-
-    width:12px;
-    height:230px;
-
-    background:#222;
-
-    z-index:10;
-}
-
-.flag:before{
-    content:"";
-
-    position:absolute;
-
-    left:10px;
-    top:0;
-
-    width:100px;
-    height:65px;
-
-    background:#ffd43b;
-
-    clip-path:polygon(
-        0 0,
-        100% 20%,
-        75% 50%,
-        100% 80%,
-        0 100%
-    );
-}
-
-/* ================= HUD ================= */
-
-#hud{
-    position:fixed;
-    top:15px;
-    left:15px;
-    right:15px;
-
-    display:flex;
-    justify-content:space-between;
-
-    color:white;
-
-    font-weight:bold;
-
-    z-index:50;
-
-    text-shadow:2px 2px #111;
-}
-
-#hud span{
-    margin-right:18px;
-}
-
-/* ================= CONTROLES ================= */
-
-.controls{
-    position:fixed;
-
-    left:20px;
-    right:20px;
-    bottom:20px;
-
-    display:flex;
-    justify-content:space-between;
-
-    z-index:60;
-}
-
-.leftControls{
-    display:flex;
-    gap:12px;
-}
-
-.control{
-    width:72px;
-    height:72px;
-
-    border-radius:50%;
-
-    background:rgba(0,0,0,.55);
-
-    border:3px solid white;
-
-    color:white;
-
-    font-size:30px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.jump{
-    width:90px;
-    height:90px;
-
-    background:rgba(255,190,0,.85);
-
-    color:#111;
-
-    font-size:22px;
-
-    font-weight:bold;
-}
-
-/* ================= GAME OVER ================= */
-
-#message{
-    position:fixed;
-    inset:0;
-
-    background:rgba(0,0,0,.75);
-
-    z-index:100;
-
-    display:flex;
-    flex-direction:column;
-
-    align-items:center;
-    justify-content:center;
-
-    color:white;
-    text-align:center;
-}
-
-#message h2{
-    font-size:45px;
-    margin-bottom:15px;
-}
-
-#message button{
-    margin-top:20px;
-
-    width:250px;
-    height:65px;
-
-    border-radius:15px;
-
-    background:#ffd43b;
-
-    font-size:22px;
-    font-weight:bold;
-}
-
-/* ================= PC ================= */
-
-@media(min-width:800px){
-
-    .controls{
-        max-width:800px;
-        margin:auto;
-    }
+@media(min-width:900px){
+  #controls{
+    max-width:900px;
+    margin:auto;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- MENU -->
+<!-- MESSAGE MODE PAYSAGE -->
 
-<div id="menu">
+<div id="rotate">
 
-    <h1>JADEN</h1>
+  <div class="card">
 
-    <h2>NINJA RUN</h2>
+    <span class="icon">📱↔️</span>
 
-    <p>Une aventure ninja commence...</p>
+    <h2>Tourne ton téléphone</h2>
 
-    <button id="play">
-        JOUER
-    </button>
+    <p>
+      Jaden Ninja Run se joue en mode paysage.
+      Mets ton téléphone à l'horizontale pour jouer.
+    </p>
+
+  </div>
 
 </div>
 
 
 <!-- JEU -->
 
-<div id="game" class="hidden">
+<div id="game">
 
-    <div class="cloud c1"></div>
-    <div class="cloud c2"></div>
+  <canvas id="canvas"></canvas>
 
-    <div id="hud">
 
-        <div>
-            ❤️ <span id="lives">3</span>
-            🪙 <span id="coins">0</span>
-        </div>
+  <!-- SCORE -->
 
-        <div>
-            SCORE <span id="score">0</span>
-        </div>
+  <div id="hud">
+
+    <div class="box">
+      ❤️ <span id="lives">3</span>
+      &nbsp;
+      🪙 <span id="coins">0</span>
+    </div>
+
+    <div class="box">
+      SCORE <span id="score">0</span>
+    </div>
+
+  </div>
+
+
+  <!-- CONTROLES -->
+
+  <div id="controls">
+
+    <div class="side">
+
+      <button class="btn" id="left">
+        ◀
+      </button>
+
+      <button class="btn" id="right">
+        ▶
+      </button>
 
     </div>
 
+    <button class="btn" id="jump">
+      SAUTER
+    </button>
 
-    <div id="world">
-
-        <div class="ground"></div>
-
-        <!-- plateformes -->
-
-        <div class="platform"
-             style="left:450px;bottom:190px;width:220px">
-        </div>
-
-        <div class="platform"
-             style="left:850px;bottom:270px;width:180px">
-        </div>
-
-        <div class="platform"
-             style="left:1200px;bottom:180px;width:250px">
-        </div>
-
-        <div class="platform"
-             style="left:1650px;bottom:250px;width:180px">
-        </div>
-
-        <div class="platform"
-             style="left:2050px;bottom:190px;width:250px">
-        </div>
-
-        <div class="platform"
-             style="left:2500px;bottom:300px;width:200px">
-        </div>
-
-
-        <!-- blocs -->
-
-        <div class="block"
-             style="left:700px;bottom:75px">
-            ?
-        </div>
-
-        <div class="block"
-             style="left:760px;bottom:75px">
-            ?
-        </div>
-
-
-        <!-- pièces -->
-
-        <div class="coin"
-             style="left:500px;bottom:240px">
-            $
-        </div>
-
-        <div class="coin"
-             style="left:560px;bottom:240px">
-            $
-        </div>
-
-        <div class="coin"
-             style="left:620px;bottom:240px">
-            $
-        </div>
-
-        <div class="coin"
-             style="left:900px;bottom:330px">
-            $
-        </div>
-
-        <div class="coin"
-             style="left:960px;bottom:330px">
-            $
-        </div>
-
-        <div class="coin"
-             style="left:1300px;bottom:230px">
-            $
-        </div>
-
-        <div class="coin"
-             style="left:1360px;bottom:230px">
-            $
-        </div>
-
-
-        <!-- ennemis -->
-
-        <div class="enemy"
-             style="left:600px;bottom:75px">
-            👾
-        </div>
-
-        <div class="enemy"
-             style="left:1100px;bottom:75px">
-            👾
-        </div>
-
-        <div class="enemy"
-             style="left:1550px;bottom:75px">
-            👾
-        </div>
-
-        <div class="enemy"
-             style="left:2200px;bottom:75px">
-            👾
-        </div>
-
-
-        <!-- arrivée -->
-
-        <div class="flag"
-             style="left:3100px;bottom:75px">
-        </div>
-
-
-        <!-- joueur -->
-
-        <div id="player"
-             style="left:100px;bottom:75px">
-            🥷
-        </div>
-
-    </div>
-
-
-    <!-- contrôles -->
-
-    <div class="controls">
-
-        <div class="leftControls">
-
-            <button
-                class="control"
-                id="left">
-                ◀
-            </button>
-
-            <button
-                class="control"
-                id="right">
-                ▶
-            </button>
-
-        </div>
-
-        <button
-            class="control jump"
-            id="jump">
-            SAUT
-        </button>
-
-    </div>
+  </div>
 
 </div>
 
 
-<!-- GAME OVER / VICTOIRE -->
+<!-- MENU -->
 
-<div id="message" class="hidden">
+<div id="menu">
 
-    <h2 id="messageTitle">
-        GAME OVER
-    </h2>
+  <h1>JADEN</h1>
 
-    <p id="messageText">
-        Score : 0
-    </p>
+  <h2>NINJA RUN</h2>
 
-    <button id="restart">
-        REJOUER
-    </button>
+  <p>
+    Jeu de plateforme ninja original :
+    cours, saute, récupère les pièces
+    et atteins le drapeau.
+  </p>
+
+  <button class="big" id="play">
+    JOUER
+  </button>
+
+</div>
+
+
+<!-- FIN -->
+
+<div id="end" class="hidden">
+
+  <h2 id="endTitle">
+    GAME OVER
+  </h2>
+
+  <p id="endText"></p>
+
+  <button class="big" id="again">
+    REJOUER
+  </button>
 
 </div>
 
 
 <script>
 
-/* =====================================
-   ELEMENTS
-===================================== */
+const canvas =
+document.getElementById("canvas");
+
+const ctx =
+canvas.getContext("2d");
 
 const menu =
 document.getElementById("menu");
 
-const game =
-document.getElementById("game");
-
-const world =
-document.getElementById("world");
-
-const player =
-document.getElementById("player");
+const end =
+document.getElementById("end");
 
 const play =
 document.getElementById("play");
 
-const leftButton =
-document.getElementById("left");
+const again =
+document.getElementById("again");
 
-const rightButton =
-document.getElementById("right");
-
-const jumpButton =
-document.getElementById("jump");
-
-const message =
-document.getElementById("message");
-
-const messageTitle =
-document.getElementById("messageTitle");
-
-const messageText =
-document.getElementById("messageText");
-
-const restart =
-document.getElementById("restart");
-
-const scoreElement =
-document.getElementById("score");
-
-const coinsElement =
-document.getElementById("coins");
-
-const livesElement =
+const livesEl =
 document.getElementById("lives");
 
+const coinsEl =
+document.getElementById("coins");
 
-/* =====================================
-   VARIABLES
-===================================== */
+const scoreEl =
+document.getElementById("score");
 
-let x = 100;
+const endTitle =
+document.getElementById("endTitle");
 
-let y = 75;
+const endText =
+document.getElementById("endText");
 
-let velocityY = 0;
 
-let velocityX = 0;
+let W = innerWidth;
+let H = innerHeight;
 
-let grounded = true;
+let dpr = 1;
 
-let cameraX = 0;
+let state = "menu";
 
-let playing = false;
+let raf = 0;
+
+const WORLD_W = 5200;
+
+let groundY = H - 105;
+
+let camera = 0;
 
 let lives = 3;
 
@@ -712,739 +383,1525 @@ let coins = 0;
 
 let score = 0;
 
-let keys = {
+let jumpBuffer = 0;
 
-    left:false,
 
-    right:false
+const player = {
+
+  x:90,
+
+  y:0,
+
+  w:38,
+
+  h:52,
+
+  vx:0,
+
+  vy:0,
+
+  grounded:false,
+
+  coyote:0,
+
+  inv:0
 
 };
 
-const gravity = 0.8;
 
-const jumpPower = 15;
+const input = {
 
-const acceleration = 0.8;
+  left:false,
 
-const friction = 0.8;
+  right:false,
 
-const maxSpeed = 7;
+  jump:false
+
+};
 
 
-/* =====================================
-   JOUER
-===================================== */
+/* PLATEFORMES */
 
-play.addEventListener(
-"pointerdown",
-function(){
+const platformDefs = [
 
-    startGame();
+  {x:330,w:180,dy:105},
+
+  {x:610,w:155,dy:175},
+
+  {x:900,w:220,dy:110},
+
+  {x:1230,w:180,dy:210},
+
+  {x:1530,w:210,dy:125},
+
+  {x:1840,w:150,dy:205},
+
+  {x:2110,w:250,dy:110},
+
+  {x:2500,w:190,dy:245},
+
+  {x:2820,w:230,dy:135},
+
+  {x:3200,w:180,dy:215},
+
+  {x:3510,w:250,dy:115},
+
+  {x:3900,w:180,dy:235},
+
+  {x:4210,w:260,dy:135}
+
+];
+
+
+const gapDefs = [
+
+  [780,900],
+
+  [1400,1530],
+
+  [1990,2110],
+
+  [2760,2820],
+
+  [3040,3200],
+
+  [3760,3900],
+
+  [4490,4620]
+
+];
+
+
+let platforms = [];
+
+let gaps = [];
+
+let coinsData = [];
+
+let enemies = [];
+
+
+/* =========================
+   RESIZE
+========================= */
+
+function resize(){
+
+  W = innerWidth;
+
+  H = innerHeight;
+
+  dpr =
+  Math.min(
+    devicePixelRatio || 1,
+    2
+  );
+
+  canvas.width =
+  Math.floor(W * dpr);
+
+  canvas.height =
+  Math.floor(H * dpr);
+
+  canvas.style.width =
+  W + "px";
+
+  canvas.style.height =
+  H + "px";
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+  groundY =
+  H - 105;
+
+  buildLevel();
 
 }
+
+
+addEventListener(
+  "resize",
+  resize
 );
 
+
+addEventListener(
+  "orientationchange",
+  () => {
+    setTimeout(
+      resize,
+      100
+    );
+  }
+);
+
+
+/* =========================
+   CREATION DU NIVEAU
+========================= */
+
+function buildLevel(){
+
+  platforms =
+  platformDefs.map(
+    p => ({
+      x:p.x,
+      y:groundY-p.dy,
+      w:p.w,
+      h:18
+    })
+  );
+
+
+  gaps =
+  gapDefs.map(
+    g => ({
+      x:g[0],
+      w:g[1]-g[0]
+    })
+  );
+
+
+  coinsData = [
+
+    {x:380,y:groundY-150,taken:false},
+
+    {x:450,y:groundY-150,taken:false},
+
+    {x:675,y:groundY-220,taken:false},
+
+    {x:730,y:groundY-220,taken:false},
+
+    {x:980,y:groundY-155,taken:false},
+
+    {x:1040,y:groundY-155,taken:false},
+
+    {x:1290,y:groundY-260,taken:false},
+
+    {x:1360,y:groundY-260,taken:false},
+
+    {x:1580,y:groundY-170,taken:false},
+
+    {x:1640,y:groundY-170,taken:false},
+
+    {x:2170,y:groundY-155,taken:false},
+
+    {x:2240,y:groundY-155,taken:false},
+
+    {x:2550,y:groundY-295,taken:false},
+
+    {x:2620,y:groundY-295,taken:false},
+
+    {x:3260,y:groundY-265,taken:false},
+
+    {x:3560,y:groundY-165,taken:false},
+
+    {x:3950,y:groundY-285,taken:false},
+
+    {x:4280,y:groundY-185,taken:false}
+
+  ];
+
+
+  enemies = [
+
+    {
+      x:560,
+      y:groundY-38,
+      w:38,
+      h:38,
+      vx:55,
+      min:500,
+      max:740,
+      dead:false
+    },
+
+    {
+      x:1120,
+      y:groundY-38,
+      w:38,
+      h:38,
+      vx:55,
+      min:1060,
+      max:1190,
+      dead:false
+    },
+
+    {
+      x:1720,
+      y:groundY-38,
+      w:38,
+      h:38,
+      vx:55,
+      min:1580,
+      max:1810,
+      dead:false
+    },
+
+    {
+      x:2300,
+      y:groundY-38,
+      w:38,
+      h:38,
+      vx:55,
+      min:2140,
+      max:2420,
+      dead:false
+    },
+
+    {
+      x:3350,
+      y:groundY-38,
+      w:38,
+      h:38,
+      vx:55,
+      min:3240,
+      max:3460,
+      dead:false
+    },
+
+    {
+      x:4430,
+      y:groundY-38,
+      w:38,
+      h:38,
+      vx:55,
+      min:4250,
+      max:4470,
+      dead:false
+    }
+
+  ];
+
+}
+
+
+/* =========================
+   DEMARRER
+========================= */
 
 function startGame(){
 
-    menu.classList.add("hidden");
+  if(innerWidth > innerHeight){
 
-    game.classList.remove("hidden");
+    if(
+      document.documentElement.requestFullscreen
+    ){
 
-    message.classList.add("hidden");
-
-    x = 100;
-
-    y = 75;
-
-    velocityY = 0;
-
-    velocityX = 0;
-
-    cameraX = 0;
-
-    lives = 3;
-
-    coins = 0;
-
-    score = 0;
-
-    grounded = true;
-
-    playing = true;
-
-    updateHUD();
-
-    requestAnimationFrame(loop);
-
-}
-
-
-/* =====================================
-   CONTROLES
-===================================== */
-
-function pressLeft(e){
-
-    e.preventDefault();
-
-    keys.left = true;
-
-}
-
-function releaseLeft(e){
-
-    e.preventDefault();
-
-    keys.left = false;
-
-}
-
-
-function pressRight(e){
-
-    e.preventDefault();
-
-    keys.right = true;
-
-}
-
-function releaseRight(e){
-
-    e.preventDefault();
-
-    keys.right = false;
-
-}
-
-
-/* téléphone */
-
-leftButton.addEventListener(
-"pointerdown",
-pressLeft
-);
-
-leftButton.addEventListener(
-"pointerup",
-releaseLeft
-);
-
-leftButton.addEventListener(
-"pointercancel",
-releaseLeft
-);
-
-leftButton.addEventListener(
-"pointerleave",
-releaseLeft
-);
-
-
-rightButton.addEventListener(
-"pointerdown",
-pressRight
-);
-
-rightButton.addEventListener(
-"pointerup",
-releaseRight
-);
-
-rightButton.addEventListener(
-"pointercancel",
-releaseRight
-);
-
-rightButton.addEventListener(
-"pointerleave",
-releaseRight
-);
-
-
-/* =====================================
-   SAUT
-===================================== */
-
-function jump(){
-
-    if(!playing) return;
-
-    if(grounded){
-
-        velocityY = jumpPower;
-
-        grounded = false;
+      document.documentElement
+        .requestFullscreen()
+        .catch(()=>{});
 
     }
 
+
+    if(
+      screen.orientation &&
+      screen.orientation.lock
+    ){
+
+      screen.orientation
+        .lock("landscape")
+        .catch(()=>{});
+
+    }
+
+  }
+
+
+  menu.classList.add("hidden");
+
+  end.classList.add("hidden");
+
+  state = "playing";
+
+  lives = 3;
+
+  coins = 0;
+
+  score = 0;
+
+  camera = 0;
+
+  jumpBuffer = 0;
+
+
+  player.x = 90;
+
+  player.y =
+  groundY - player.h;
+
+  player.vx = 0;
+
+  player.vy = 0;
+
+  player.grounded = true;
+
+  player.coyote = .1;
+
+  player.inv = 0;
+
+
+  buildLevel();
+
+  updateHUD();
+
+  cancelAnimationFrame(raf);
+
+  raf =
+  requestAnimationFrame(loop);
+
 }
 
 
-jumpButton.addEventListener(
-"pointerdown",
-function(e){
+play.addEventListener(
+  "pointerdown",
+  e => {
 
     e.preventDefault();
 
-    jump();
+    startGame();
 
-}
+  }
 );
 
 
-/* =====================================
-   CLAVIER PC
-===================================== */
+again.addEventListener(
+  "pointerdown",
+  e => {
 
-document.addEventListener(
-"keydown",
-function(e){
+    e.preventDefault();
 
-    if(e.key === "ArrowLeft")
-        keys.left = true;
+    startGame();
 
-    if(e.key === "ArrowRight")
-        keys.right = true;
+  }
+);
 
-    if(
-        e.key === " " ||
-        e.key === "ArrowUp"
-    ){
+
+/* =========================
+   CONTROLES GAUCHE / DROITE
+========================= */
+
+function bindHold(id,key){
+
+  const b =
+  document.getElementById(id);
+
+
+  const down =
+  e => {
+
+    e.preventDefault();
+
+    input[key] = true;
+
+  };
+
+
+  const up =
+  e => {
+
+    e.preventDefault();
+
+    input[key] = false;
+
+  };
+
+
+  b.addEventListener(
+    "pointerdown",
+    down
+  );
+
+  b.addEventListener(
+    "pointerup",
+    up
+  );
+
+  b.addEventListener(
+    "pointercancel",
+    up
+  );
+
+  b.addEventListener(
+    "pointerleave",
+    up
+  );
+
+  b.addEventListener(
+    "lostpointercapture",
+    up
+  );
+
+}
+
+
+bindHold(
+  "left",
+  "left"
+);
+
+
+bindHold(
+  "right",
+  "right"
+);
+
+
+/* =========================
+   SAUT
+========================= */
+
+const jumpBtn =
+document.getElementById("jump");
+
+
+jumpBtn.addEventListener(
+  "pointerdown",
+  e => {
+
+    e.preventDefault();
+
+    input.jump = true;
+
+    jumpBuffer = .14;
+
+  }
+);
+
+
+[
+  "pointerup",
+  "pointercancel",
+  "pointerleave",
+  "lostpointercapture"
+].forEach(
+  ev => {
+
+    jumpBtn.addEventListener(
+      ev,
+      e => {
 
         e.preventDefault();
 
-        jump();
+        input.jump = false;
+
+      }
+    );
+
+  }
+);
+
+
+/* =========================
+   CLAVIER
+========================= */
+
+addEventListener(
+  "keydown",
+  e => {
+
+    if(
+      e.key === "ArrowLeft" ||
+      e.key.toLowerCase() === "a"
+    ){
+
+      input.left = true;
 
     }
 
-}
+
+    if(
+      e.key === "ArrowRight" ||
+      e.key.toLowerCase() === "d"
+    ){
+
+      input.right = true;
+
+    }
+
+
+    if(
+      e.key === " " ||
+      e.key === "ArrowUp" ||
+      e.key.toLowerCase() === "w"
+    ){
+
+      e.preventDefault();
+
+      jumpBuffer = .14;
+
+      input.jump = true;
+
+    }
+
+  }
 );
 
 
-document.addEventListener(
-"keyup",
-function(e){
+addEventListener(
+  "keyup",
+  e => {
 
-    if(e.key === "ArrowLeft")
-        keys.left = false;
+    if(
+      e.key === "ArrowLeft" ||
+      e.key.toLowerCase() === "a"
+    ){
 
-    if(e.key === "ArrowRight")
-        keys.right = false;
+      input.left = false;
 
-}
+    }
+
+
+    if(
+      e.key === "ArrowRight" ||
+      e.key.toLowerCase() === "d"
+    ){
+
+      input.right = false;
+
+    }
+
+
+    if(
+      e.key === " " ||
+      e.key === "ArrowUp" ||
+      e.key.toLowerCase() === "w"
+    ){
+
+      input.jump = false;
+
+    }
+
+  }
 );
 
 
-/* =====================================
-   PLATEFORMES
-===================================== */
+/* =========================
+   COLLISION
+========================= */
 
-function getPlatforms(){
+function overlaps(a,b){
 
-    return [
+  return (
 
-        {
-            x:450,
-            y:190,
-            w:220,
-            h:28
-        },
+    a.x < b.x+b.w &&
 
-        {
-            x:850,
-            y:270,
-            w:180,
-            h:28
-        },
+    a.x+a.w > b.x &&
 
-        {
-            x:1200,
-            y:180,
-            w:250,
-            h:28
-        },
+    a.y < b.y+b.h &&
 
-        {
-            x:1650,
-            y:250,
-            w:180,
-            h:28
-        },
+    a.y+a.h > b.y
 
-        {
-            x:2050,
-            y:190,
-            w:250,
-            h:28
-        },
-
-        {
-            x:2500,
-            y:300,
-            w:200,
-            h:28
-        }
-
-    ];
+  );
 
 }
 
 
-/* =====================================
-   COLLISION PLATEFORMES
-===================================== */
+/* =========================
+   SOL
+========================= */
 
-function updatePhysics(){
+function groundAt(x){
 
-    const oldY = y;
+  for(
+    const g of gaps
+  ){
 
-    velocityY -= gravity;
+    if(
+      x > g.x &&
+      x < g.x+g.w
+    ){
 
-    y += velocityY;
+      return false;
 
-    grounded = false;
+    }
+
+  }
+
+  return true;
+
+}
 
 
-    /* sol */
+/* =========================
+   PHYSIQUE
+========================= */
 
-    if(y <= 75){
+function update(dt){
 
-        y = 75;
+  jumpBuffer =
+  Math.max(
+    0,
+    jumpBuffer-dt
+  );
 
-        velocityY = 0;
 
-        grounded = true;
+  player.inv =
+  Math.max(
+    0,
+    player.inv-dt
+  );
+
+
+  player.coyote =
+  Math.max(
+    0,
+    player.coyote-dt
+  );
+
+
+  /* déplacement */
+
+  if(
+    input.left &&
+    !input.right
+  ){
+
+    player.vx -=
+    900*dt;
+
+  }
+
+  else if(
+    input.right &&
+    !input.left
+  ){
+
+    player.vx +=
+    900*dt;
+
+  }
+
+  else{
+
+    player.vx *=
+    Math.pow(.001,dt);
+
+  }
+
+
+  player.vx =
+  Math.max(
+    -290,
+    Math.min(
+      290,
+      player.vx
+    )
+  );
+
+
+  /* saut */
+
+  if(
+    jumpBuffer > 0 &&
+    (
+      player.grounded ||
+      player.coyote > 0
+    )
+  ){
+
+    player.vy = -610;
+
+    player.grounded = false;
+
+    player.coyote = 0;
+
+    jumpBuffer = 0;
+
+  }
+
+
+  if(
+    !input.jump &&
+    player.vy < 0
+  ){
+
+    player.vy +=
+    1500*dt;
+
+  }
+
+
+  const oldY =
+  player.y;
+
+
+  player.x +=
+  player.vx*dt;
+
+
+  player.x =
+  Math.max(
+    0,
+    Math.min(
+      WORLD_W-player.w,
+      player.x
+    )
+  );
+
+
+  player.vy +=
+  1650*dt;
+
+
+  player.y +=
+  player.vy*dt;
+
+
+  player.grounded = false;
+
+
+  let landed = false;
+
+
+  /* sol */
+
+  if(
+    player.vy >= 0
+  ){
+
+    if(
+
+      groundAt(
+        player.x+
+        player.w*.5
+      ) &&
+
+      oldY+
+      player.h <=
+      groundY &&
+
+      player.y+
+      player.h >=
+      groundY
+
+    ){
+
+      player.y =
+      groundY-player.h;
+
+      player.vy = 0;
+
+      player.grounded =
+      true;
+
+      landed = true;
 
     }
 
 
     /* plateformes */
 
-    const platforms =
-    getPlatforms();
+    for(
+      const p of platforms
+    ){
 
+      if(
 
-    for(const p of platforms){
+        player.x+
+        player.w > p.x &&
 
-        const playerLeft = x;
+        player.x < p.x+p.w &&
 
-        const playerRight = x + 55;
+        oldY+
+        player.h <= p.y &&
 
-        const oldBottom = oldY;
+        player.y+
+        player.h >= p.y
 
-        const newBottom = y;
+      ){
 
+        player.y =
+        p.y-player.h;
 
-        if(
+        player.vy = 0;
 
-            playerRight > p.x &&
+        player.grounded =
+        true;
 
-            playerLeft < p.x + p.w &&
+        landed = true;
 
-            oldBottom >= p.y &&
+        break;
 
-            newBottom <= p.y
-
-        ){
-
-            y = p.y;
-
-            velocityY = 0;
-
-            grounded = true;
-
-        }
+      }
 
     }
+
+  }
+
+
+  /* tombe dans un trou */
+
+  if(
+    !landed &&
+    player.y > H+220
+  ){
+
+    loseLife();
+
+    return;
+
+  }
+
+
+  /* pièces */
+
+  for(
+    const c of coinsData
+  ){
+
+    if(c.taken)
+      continue;
+
+
+    const dx =
+    player.x+
+    player.w/2-c.x;
+
+
+    const dy =
+    player.y+
+    player.h/2-c.y;
+
+
+    if(
+      dx*dx+
+      dy*dy <
+      34*34
+    ){
+
+      c.taken = true;
+
+      coins++;
+
+      score += 50;
+
+    }
+
+  }
+
+
+  /* ennemis */
+
+  for(
+    const e of enemies
+  ){
+
+    if(e.dead)
+      continue;
+
+
+    e.x +=
+    e.vx*dt;
+
+
+    if(
+      e.x < e.min ||
+      e.x > e.max
+    ){
+
+      e.vx *= -1;
+
+      e.x =
+      Math.max(
+        e.min,
+        Math.min(
+          e.max,
+          e.x
+        )
+      );
+
+    }
+
+
+    const eb = {
+
+      x:e.x,
+
+      y:e.y,
+
+      w:e.w,
+
+      h:e.h
+
+    };
+
+
+    if(
+      overlaps(
+        player,
+        eb
+      ) &&
+      player.inv <= 0
+    ){
+
+      /* ennemi écrasé */
+
+      if(
+        player.vy > 120 &&
+        player.y+
+        player.h <
+        e.y+e.h
+      ){
+
+        e.dead = true;
+
+        player.vy = -420;
+
+        score += 100;
+
+      }
+
+      else{
+
+        loseLife();
+
+        return;
+
+      }
+
+    }
+
+  }
+
+
+  /* arrivée */
+
+  if(
+    player.x >= 4850
+  ){
+
+    finish(true);
+
+    return;
+
+  }
+
+
+  score +=
+  dt*4;
+
+
+  /* caméra */
+
+  camera =
+  player.x-
+  W*.34;
+
+
+  camera =
+  Math.max(
+    0,
+    Math.min(
+      WORLD_W-W,
+      camera
+    )
+  );
+
+
+  updateHUD();
 
 }
 
 
-/* =====================================
-   ENNEMIS
-===================================== */
-
-const enemies = [
-
-    {
-        x:600,
-        y:75,
-        alive:true
-    },
-
-    {
-        x:1100,
-        y:75,
-        alive:true
-    },
-
-    {
-        x:1550,
-        y:75,
-        alive:true
-    },
-
-    {
-        x:2200,
-        y:75,
-        alive:true
-    }
-
-];
-
-
-function checkEnemies(){
-
-    for(const enemy of enemies){
-
-        if(!enemy.alive)
-            continue;
-
-
-        const dx =
-        Math.abs(x - enemy.x);
-
-        const dy =
-        Math.abs(y - enemy.y);
-
-
-        if(dx < 55 && dy < 55){
-
-            /* saute dessus */
-
-            if(velocityY < 0 && y > enemy.y + 25){
-
-                enemy.alive = false;
-
-                velocityY = jumpPower * .7;
-
-                score += 100;
-
-            }
-
-            else{
-
-                loseLife();
-
-            }
-
-        }
-
-    }
-
-}
-
-
-/* =====================================
-   PIECES
-===================================== */
-
-const coinsList = [
-
-    {x:500,y:240,taken:false},
-
-    {x:560,y:240,taken:false},
-
-    {x:620,y:240,taken:false},
-
-    {x:900,y:330,taken:false},
-
-    {x:960,y:330,taken:false},
-
-    {x:1300,y:230,taken:false},
-
-    {x:1360,y:230,taken:false}
-
-];
-
-
-function checkCoins(){
-
-    for(const coin of coinsList){
-
-        if(coin.taken)
-            continue;
-
-
-        if(
-
-            Math.abs(x - coin.x) < 40 &&
-
-            Math.abs(y - coin.y) < 55
-
-        ){
-
-            coin.taken = true;
-
-            coins++;
-
-            score += 50;
-
-            coinsElement.textContent =
-            coins;
-
-            /* cacher la pièce */
-
-            const elements =
-            document.querySelectorAll(".coin");
-
-            for(const el of elements){
-
-                const left =
-                parseInt(el.style.left);
-
-                if(
-                    Math.abs(left - coin.x) < 2
-                ){
-
-                    el.style.display =
-                    "none";
-
-                    break;
-
-                }
-
-            }
-
-        }
-
-    }
-
-}
-
-
-/* =====================================
-   VIE
-===================================== */
+/* =========================
+   PERDRE UNE VIE
+========================= */
 
 function loseLife(){
 
-    lives--;
-
-    updateHUD();
-
-
-    if(lives <= 0){
-
-        endGame(false);
-
-        return;
-
-    }
+  if(
+    player.inv > 0
+  )
+    return;
 
 
-    x = Math.max(
-        100,
-        x - 250
-    );
-
-    y = 75;
-
-    velocityY = 0;
-
-}
+  lives--;
 
 
-/* =====================================
-   FIN
-===================================== */
+  if(
+    lives <= 0
+  ){
 
-function endGame(win){
+    finish(false);
 
-    playing = false;
+    return;
 
-    message.classList.remove("hidden");
+  }
 
 
-    if(win){
+  player.x =
+  Math.max(
+    90,
+    player.x-280
+  );
 
-        messageTitle.textContent =
-        "🏆 NIVEAU TERMINÉ !";
 
-        messageText.textContent =
-        "Score : " + Math.floor(score);
+  player.y =
+  groundY-player.h;
 
-    }
 
-    else{
+  player.vx = 0;
 
-        messageTitle.textContent =
-        "GAME OVER";
+  player.vy = 0;
 
-        messageText.textContent =
-        "Score : " + Math.floor(score);
+  player.grounded = true;
 
-    }
+  player.inv = 2;
+
+
+  camera =
+  Math.max(
+    0,
+    player.x-W*.34
+  );
+
+
+  updateHUD();
 
 }
 
 
-/* =====================================
+/* =========================
+   FIN DU JEU
+========================= */
+
+function finish(win){
+
+  state =
+  win
+  ? "win"
+  : "gameover";
+
+
+  end.classList.remove(
+    "hidden"
+  );
+
+
+  endTitle.textContent =
+  win
+  ? "🏆 NIVEAU TERMINÉ !"
+  : "GAME OVER";
+
+
+  endText.textContent =
+  "Score : "+
+  Math.floor(score)+
+  " • Pièces : "+
+  coins;
+
+}
+
+
+/* =========================
    HUD
-===================================== */
+========================= */
 
 function updateHUD(){
 
-    livesElement.textContent =
-    lives;
+  livesEl.textContent =
+  lives;
 
-    coinsElement.textContent =
-    coins;
+  coinsEl.textContent =
+  coins;
 
-    scoreElement.textContent =
-    Math.floor(score);
-
-}
-
-
-/* =====================================
-   CAMERA
-===================================== */
-
-function updateCamera(){
-
-    const screenWidth =
-    window.innerWidth;
-
-
-    cameraX =
-    x - screenWidth * .35;
-
-
-    if(cameraX < 0)
-        cameraX = 0;
-
-
-    if(cameraX > 5000 - screenWidth)
-        cameraX = 5000 - screenWidth;
-
-
-    world.style.transform =
-    "translateX(" + (-cameraX) + "px)";
-
+  scoreEl.textContent =
+  Math.floor(score);
 
 }
 
 
-/* =====================================
-   JOUEUR
-===================================== */
+/* =========================
+   DECOR
+========================= */
 
-function updatePlayer(){
+function drawBackground(){
 
-    player.style.left =
-    x + "px";
+  const sky =
+  ctx.createLinearGradient(
+    0,0,0,H
+  );
 
-    player.style.bottom =
-    y + "px";
+
+  sky.addColorStop(
+    0,
+    "#61bce9"
+  );
+
+
+  sky.addColorStop(
+    .65,
+    "#bcecff"
+  );
+
+
+  sky.addColorStop(
+    1,
+    "#7cc85b"
+  );
+
+
+  ctx.fillStyle =
+  sky;
+
+
+  ctx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  /* nuages */
+
+  ctx.fillStyle =
+  "#ffffff99";
+
+
+  for(
+    let i=0;
+    i<7;
+    i++
+  ){
+
+    const cx =
+    (
+      i*260-
+      camera*.12
+    ) %
+    (W+260)-130;
+
+
+    const cy =
+    70+
+    (i%3)*55;
+
+
+    ctx.beginPath();
+
+    ctx.arc(
+      cx,
+      cy,
+      24,
+      0,
+      Math.PI*2
+    );
+
+    ctx.arc(
+      cx+28,
+      cy+4,
+      30,
+      0,
+      Math.PI*2
+    );
+
+    ctx.arc(
+      cx+62,
+      cy,
+      21,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+  }
+
+
+  /* montagnes */
+
+  ctx.fillStyle =
+  "#78a8a0";
+
+
+  for(
+    let i=0;
+    i<9;
+    i++
+  ){
+
+    const x =
+    (
+      i*430-
+      camera*.18
+    ) %
+    (W+500)-250;
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      x,
+      H-105
+    );
+
+    ctx.lineTo(
+      x+210,
+      H-280
+    );
+
+    ctx.lineTo(
+      x+410,
+      H-105
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+  }
+
+
+  ctx.fillStyle =
+  "#568e66";
+
+
+  for(
+    let i=0;
+    i<8;
+    i++
+  ){
+
+    const x =
+    (
+      i*560-
+      camera*.28
+    ) %
+    (W+600)-300;
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      x,
+      H-105
+    );
+
+    ctx.lineTo(
+      x+280,
+      H-230
+    );
+
+    ctx.lineTo(
+      x+560,
+      H-105
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+  }
 
 }
 
 
-/* =====================================
-   DEPLACEMENT
-===================================== */
+/* =========================
+   MONDE
+========================= */
 
-function updateMovement(){
+function drawWorld(){
 
-    if(keys.left){
+  ctx.save();
 
-        velocityX -= acceleration;
+
+  ctx.translate(
+    -camera,
+    0
+  );
+
+
+  /* sol */
+
+  ctx.fillStyle =
+  "#2f873d";
+
+
+  for(
+    let x=0;
+    x<WORLD_W;
+    x+=40
+  ){
+
+    let inGap =
+    false;
+
+
+    for(
+      const g of gaps
+    ){
+
+      if(
+        x+40 > g.x &&
+        x < g.x+g.w
+      ){
+
+        inGap = true;
+
+      }
 
     }
 
-    if(keys.right){
 
-        velocityX += acceleration;
+    if(!inGap){
+
+      ctx.fillRect(
+        x,
+        groundY,
+        40,
+        H-groundY
+      );
+
+    }
+
+  }
+
+
+  /* terre */
+
+  ctx.fillStyle =
+  "#6d3e20";
+
+
+  for(
+    let x=0;
+    x<WORLD_W;
+    x+=60
+  ){
+
+    let inGap =
+    false;
+
+
+    for(
+      const g of gaps
+    ){
+
+      if(
+        x+60 > g.x &&
+        x < g.x+g.w
+      ){
+
+        inGap = true;
+
+      }
 
     }
 
 
-    if(!keys.left && !keys.right){
+    if(!inGap){
 
-        velocityX *= friction;
+      ctx.fillRect(
+        x,
+        groundY+18,
+        60,
+        H-groundY-18
+      );
 
     }
 
+  }
 
-    velocityX =
-    Math.max(
-        -maxSpeed,
-        Math.min(maxSpeed,velocityX)
+
+  /* plateformes */
+
+  for(
+    const p of platforms
+  ){
+
+    ctx.fillStyle =
+    "#6b3b1e";
+
+
+    ctx.fillRect(
+      p.x,
+      p.y,
+      p.w,
+      p.h
     );
 
 
-    x += velocityX;
+    ctx.fillStyle =
+    "#9b6130";
 
 
-    if(x < 0)
-        x = 0;
+    ctx.fillRect(
+      p.x,
+      p.y,
+      p.w,
+      7
+    );
 
 
-    if(x > 4900)
-        x = 4900;
-
-}
+    ctx.strokeStyle =
+    "#4a2816";
 
 
-/* =====================================
-   BOUCLE
-===================================== */
-
-function loop(){
-
-    if(!playing)
-        return;
+    ctx.lineWidth = 3;
 
 
-    updateMovement();
+    ctx.strokeRect(
+      p.x,
+      p.y,
+      p.w,
+      p.h
+    );
 
-    updatePhysics();
-
-    checkEnemies();
-
-    checkCoins();
-
-    updatePlayer();
-
-    updateCamera();
-
-    score += .05;
-
-    updateHUD();
+  }
 
 
-    /* arrivée */
+  /* blocs */
 
-    if(x >= 3000){
+  const blocks = [
 
-        endGame(true);
+    {x:720,dy:70},
 
-        return;
+    {x:780,dy:70},
 
-    }
+    {x:2700,dy:70},
+
+    {x:2760,dy:70}
+
+  ];
 
 
-    requestAnimationFrame(loop);
+  for(
+    const b of blocks
+  ){
 
-}
+    const y =
+    groundY-
+    b.dy-
+    60;
 
 
-/* =====================================
-   REJOUER
-===================================== */
+    ctx.fillStyle =
+    "#e8a82f";
 
-restart.addEventListener(
-"pointerdown",
-function(){
 
-    startGame();
+    ctx.fillRect(
+      b.x,
+      y,
+      60,
+      60
+    );
 
-}
-);
 
-</script>
+    ctx.strokeStyle =
+    "#a86b15";
 
-</body>
-</html>
+
+    ctx.lineWidth = 4;
+
+
+    
