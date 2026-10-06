@@ -1,1103 +1,1432 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport"
-      content="width=device-width,
-               initial-scale=1,
-               maximum-scale=1,
-               user-scalable=no">
+      content="width=device-width,initial-scale=1.0,
+               maximum-scale=1.0,user-scalable=no">
 
 <title>Jaden Ninja Run</title>
 
 <style>
-
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
 }
 
-html,
-body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-
-    font-family: Arial, sans-serif;
-
-    background: #0d1528;
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Arial,sans-serif;
+    background:#10182b;
 }
 
-button {
-    border: 0;
-    outline: 0;
-
-    font-family: Arial, sans-serif;
-
-    cursor: pointer;
-
-    touch-action: manipulation;
-
-    -webkit-user-select: none;
-    user-select: none;
+button{
+    border:0;
+    font:inherit;
+    touch-action:none;
 }
 
+/* ================= MENU ================= */
 
-/* =========================
-   MENU
-========================= */
-
-#menu {
-
-    width: 100%;
-    height: 100vh;
-
-    padding: 45px 20px;
-
-    text-align: center;
-
-    color: white;
-
-    background: #0d1528;
+#menu{
+    position:fixed;
+    inset:0;
+    background:linear-gradient(#10182b,#263d61);
+    color:white;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    z-index:100;
 }
 
-#menu h1 {
-
-    margin: 0;
-
-    color: #ffd43b;
-
-    font-size: 48px;
-
-    letter-spacing: 4px;
+#menu h1{
+    color:#ffd43b;
+    font-size:50px;
+    letter-spacing:5px;
 }
 
-#menu h2 {
-
-    margin: 0 0 40px;
-
-    font-size: 24px;
-
-    letter-spacing: 7px;
+#menu h2{
+    margin:5px 0 25px;
+    letter-spacing:6px;
 }
 
-#menu p {
-
-    margin: 0 0 25px;
-
-    color: #aeb6c7;
-
-    font-size: 23px;
+#menu p{
+    color:#ccd3df;
+    margin-bottom:25px;
 }
 
-
-/* =========================
-   PERSONNAGES
-========================= */
-
-.characters {
-
-    display: flex;
-
-    gap: 10px;
-
-    width: 100%;
-
-    max-width: 700px;
-
-    margin: auto;
+#play{
+    width:260px;
+    height:70px;
+    border-radius:18px;
+    background:#ffd43b;
+    color:#111;
+    font-size:25px;
+    font-weight:bold;
 }
 
-.character {
-
-    position: relative;
-
-    flex: 1;
-
-    height: 205px;
-
-    border: 3px solid #303d55;
-
-    border-radius: 25px;
-
-    background: #202c40;
-
-    color: white;
-
-    touch-action: manipulation;
+.hidden{
+    display:none!important;
 }
 
-.character.selected {
+/* ================= JEU ================= */
 
-    border-color: #ffd43b;
-
-    background: #2c394f;
-}
-
-.character strong {
-
-    position: absolute;
-
-    bottom: 18px;
-
-    left: 0;
-
-    width: 100%;
-
-    font-size: 18px;
-}
-
-
-/* personnages dessinés */
-
-.person {
-
-    position: absolute;
-
-    left: 50%;
-    top: 15px;
-
-    width: 70px;
-    height: 120px;
-
-    transform: translateX(-50%);
-}
-
-.head {
-
-    width: 50px;
-    height: 50px;
-
-    margin: auto;
-
-    border-radius: 50%;
-
-    background: #dfa06e;
-
-    border: 4px solid #151b29;
-}
-
-.body {
-
-    width: 55px;
-    height: 55px;
-
-    margin: -2px auto;
-
-    border-radius: 10px;
-
-    background: #263c79;
-}
-
-.legs {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    width: 45px;
-
-    margin: auto;
-}
-
-.legs i {
-
-    width: 18px;
-    height: 32px;
-
-    border-radius: 0 0 8px 8px;
-
-    background: #151b29;
-}
-
-.shadow .head {
-    background: #888f9e;
-}
-
-.shadow .body {
-    background: #111827;
-}
-
-.fire .body {
-    background: #c83d26;
-}
-
-
-/* =========================
-   JOUER
-========================= */
-
-#playButton {
-
-    display: block;
-
-    width: 100%;
-
-    max-width: 700px;
-
-    height: 95px;
-
-    margin: 45px auto 0;
-
-    border-radius: 25px;
-
-    background: #ffd43b;
-
-    color: #111;
-
-    font-size: 30px;
-
-    font-weight: bold;
-}
-
-#playButton:active {
-
-    transform: scale(.97);
-}
-
-
-/* =========================
-   JEU
-========================= */
-
-#game {
-
-    position: relative;
-
-    width: 100%;
-    height: 100vh;
-
-    overflow: hidden;
-
+#game{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
     background:
-        linear-gradient(
-            #111a32,
-            #334e75
-        );
+        linear-gradient(#6cc7ff 0%,#bceaff 65%,#72c454 65%);
 }
 
+/* décor */
 
-/* score */
-
-#scoreBoard {
-
-    position: absolute;
-
-    top: 20px;
-
-    left: 20px;
-    right: 20px;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    color: white;
-
-    z-index: 20;
+.cloud{
+    position:absolute;
+    width:130px;
+    height:35px;
+    background:white;
+    opacity:.7;
+    border-radius:30px;
 }
 
-.scoreBox {
-
-    display: flex;
-
-    flex-direction: column;
-
-    font-size: 12px;
-
-    font-weight: bold;
+.cloud:before,
+.cloud:after{
+    content:"";
+    position:absolute;
+    background:white;
+    border-radius:50%;
 }
 
-.scoreBox b {
-
-    font-size: 25px;
+.cloud:before{
+    width:55px;
+    height:55px;
+    left:20px;
+    bottom:0;
 }
 
-
-/* joueur */
-
-#player {
-
-    position: absolute;
-
-    left: 15%;
-
-    bottom: 90px;
-
-    width: 70px;
-    height: 70px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    font-size: 55px;
-
-    z-index: 10;
+.cloud:after{
+    width:65px;
+    height:65px;
+    right:15px;
+    bottom:0;
 }
 
-.jump {
-
-    animation: jumpAnimation .65s ease-out;
+.c1{
+    top:12%;
+    left:10%;
 }
 
-@keyframes jumpAnimation {
-
-    0% {
-        bottom: 90px;
-    }
-
-    50% {
-        bottom: 270px;
-    }
-
-    100% {
-        bottom: 90px;
-    }
+.c2{
+    top:22%;
+    left:65%;
 }
 
+/* ================= MONDE ================= */
 
-/* obstacle */
-
-#obstacle {
-
-    position: absolute;
-
-    left: 100%;
-
-    bottom: 90px;
-
-    font-size: 55px;
-
-    z-index: 9;
+#world{
+    position:absolute;
+    left:0;
+    top:0;
+    width:5000px;
+    height:100%;
 }
-
 
 /* sol */
 
-#ground {
-
-    position: absolute;
-
-    left: 0;
-    bottom: 0;
-
-    width: 100%;
-    height: 90px;
+.ground{
+    position:absolute;
+    left:0;
+    bottom:0;
+    width:5000px;
+    height:75px;
 
     background:
-        repeating-linear-gradient(
-            135deg,
-            #171717 0,
-            #171717 25px,
-            #272727 25px,
-            #272727 50px
-        );
+    repeating-linear-gradient(
+        45deg,
+        #267a36 0 25px,
+        #318c3f 25px 50px
+    );
 
-    border-top: 5px solid #ffd43b;
+    border-top:6px solid #155323;
 }
 
+/* plateformes */
 
-/* bouton saut */
+.platform{
+    position:absolute;
+    height:28px;
 
-#jumpButton {
+    background:
+    linear-gradient(
+        #965c2c,
+        #6b391c
+    );
 
-    position: absolute;
-
-    right: 20px;
-    bottom: 110px;
-
-    width: 135px;
-    height: 70px;
-
-    border: 3px solid white;
-
-    border-radius: 40px;
-
-    background: #ffd43b;
-
-    color: #111;
-
-    font-size: 18px;
-
-    font-weight: bold;
-
-    z-index: 50;
+    border:4px solid #4b2716;
+    border-radius:7px;
 }
 
-#jumpButton:active {
+/* blocs */
 
-    transform: scale(.9);
+.block{
+    position:absolute;
+    width:60px;
+    height:60px;
+
+    background:#e7a52e;
+
+    border:4px solid #a96d13;
+
+    border-radius:8px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:28px;
 }
 
+/* ================= JOUEUR ================= */
 
-/* =========================
-   GAME OVER
-========================= */
+#player{
+    position:absolute;
 
-#gameOver {
+    width:55px;
+    height:70px;
 
-    position: fixed;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-    inset: 0;
+    font-size:48px;
 
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    text-align: center;
-
-    background: rgba(5,8,15,.95);
-
-    color: white;
-
-    z-index: 100;
+    z-index:20;
 }
 
-#gameOver h2 {
+/* ================= PIECES ================= */
 
-    font-size: 45px;
+.coin{
+    position:absolute;
 
-    margin: 0 0 15px;
+    width:30px;
+    height:30px;
+
+    border-radius:50%;
+
+    background:#ffd43b;
+
+    border:4px solid #d79500;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:15px;
+
+    animation:coin 0.6s infinite alternate;
 }
 
-#gameOver p {
-
-    font-size: 25px;
+@keyframes coin{
+    from{transform:scale(.85)}
+    to{transform:scale(1.1)}
 }
 
-#gameOver button {
+/* ================= ENNEMIS ================= */
 
-    width: 80%;
+.enemy{
+    position:absolute;
 
-    max-width: 400px;
+    width:55px;
+    height:45px;
 
-    height: 65px;
+    border-radius:20px 20px 10px 10px;
 
-    margin: 7px;
+    background:#c73737;
 
-    border-radius: 18px;
+    border:4px solid #751d1d;
 
-    background: #ffd43b;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-    font-size: 21px;
+    font-size:28px;
 
-    font-weight: bold;
+    z-index:15;
 }
 
-#menuButton {
+/* ================= DRAPEAU ================= */
 
-    background: #293750 !important;
+.flag{
+    position:absolute;
 
-    color: white;
+    width:12px;
+    height:230px;
+
+    background:#222;
+
+    z-index:10;
 }
 
+.flag:before{
+    content:"";
 
-/* =========================
-   CACHÉ
-========================= */
+    position:absolute;
 
-.hidden {
-    display: none !important;
+    left:10px;
+    top:0;
+
+    width:100px;
+    height:65px;
+
+    background:#ffd43b;
+
+    clip-path:polygon(
+        0 0,
+        100% 20%,
+        75% 50%,
+        100% 80%,
+        0 100%
+    );
 }
 
+/* ================= HUD ================= */
 
-/* =========================
-   PETITS ÉCRANS
-========================= */
+#hud{
+    position:fixed;
+    top:15px;
+    left:15px;
+    right:15px;
 
-@media (max-height: 650px) {
+    display:flex;
+    justify-content:space-between;
 
-    #menu {
-        padding-top: 20px;
+    color:white;
+
+    font-weight:bold;
+
+    z-index:50;
+
+    text-shadow:2px 2px #111;
+}
+
+#hud span{
+    margin-right:18px;
+}
+
+/* ================= CONTROLES ================= */
+
+.controls{
+    position:fixed;
+
+    left:20px;
+    right:20px;
+    bottom:20px;
+
+    display:flex;
+    justify-content:space-between;
+
+    z-index:60;
+}
+
+.leftControls{
+    display:flex;
+    gap:12px;
+}
+
+.control{
+    width:72px;
+    height:72px;
+
+    border-radius:50%;
+
+    background:rgba(0,0,0,.55);
+
+    border:3px solid white;
+
+    color:white;
+
+    font-size:30px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.jump{
+    width:90px;
+    height:90px;
+
+    background:rgba(255,190,0,.85);
+
+    color:#111;
+
+    font-size:22px;
+
+    font-weight:bold;
+}
+
+/* ================= GAME OVER ================= */
+
+#message{
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,.75);
+
+    z-index:100;
+
+    display:flex;
+    flex-direction:column;
+
+    align-items:center;
+    justify-content:center;
+
+    color:white;
+    text-align:center;
+}
+
+#message h2{
+    font-size:45px;
+    margin-bottom:15px;
+}
+
+#message button{
+    margin-top:20px;
+
+    width:250px;
+    height:65px;
+
+    border-radius:15px;
+
+    background:#ffd43b;
+
+    font-size:22px;
+    font-weight:bold;
+}
+
+/* ================= PC ================= */
+
+@media(min-width:800px){
+
+    .controls{
+        max-width:800px;
+        margin:auto;
     }
-
-    #menu h2 {
-        margin-bottom: 20px;
-    }
-
-    .character {
-        height: 160px;
-    }
-
-    #playButton {
-        margin-top: 20px;
-        height: 70px;
-    }
-
 }
-
 </style>
-
 </head>
-
 
 <body>
 
-
-<!-- =========================
-     MENU
-========================= -->
+<!-- MENU -->
 
 <div id="menu">
 
     <h1>JADEN</h1>
 
-    <h2>N I N J A  R U N</h2>
+    <h2>NINJA RUN</h2>
 
-    <p>Choisis ton ninja</p>
+    <p>Une aventure ninja commence...</p>
 
-
-    <div class="characters">
-
-
-        <button class="character selected"
-                data-character="ninja">
-
-            <div class="person">
-
-                <div class="head"></div>
-
-                <div class="body"></div>
-
-                <div class="legs">
-                    <i></i>
-                    <i></i>
-                </div>
-
-            </div>
-
-            <strong>NINJA</strong>
-
-        </button>
-
-
-        <button class="character"
-                data-character="shadow">
-
-            <div class="person shadow">
-
-                <div class="head"></div>
-
-                <div class="body"></div>
-
-                <div class="legs">
-                    <i></i>
-                    <i></i>
-                </div>
-
-            </div>
-
-            <strong>SHADOW</strong>
-
-        </button>
-
-
-        <button class="character"
-                data-character="fire">
-
-            <div class="person fire">
-
-                <div class="head"></div>
-
-                <div class="body"></div>
-
-                <div class="legs">
-                    <i></i>
-                    <i></i>
-                </div>
-
-            </div>
-
-            <strong>FIRE</strong>
-
-        </button>
-
-
-    </div>
-
-
-    <button id="playButton">
+    <button id="play">
         JOUER
     </button>
 
 </div>
 
 
-
-<!-- =========================
-     JEU
-========================= -->
+<!-- JEU -->
 
 <div id="game" class="hidden">
 
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
 
-    <div id="scoreBoard">
+    <div id="hud">
 
-        <div class="scoreBox">
-            SCORE
-            <b id="score">0</b>
+        <div>
+            ❤️ <span id="lives">3</span>
+            🪙 <span id="coins">0</span>
         </div>
 
-        <div class="scoreBox">
-            RECORD
-            <b id="best">0</b>
+        <div>
+            SCORE <span id="score">0</span>
         </div>
 
     </div>
 
 
-    <div id="player">
-        🥷
+    <div id="world">
+
+        <div class="ground"></div>
+
+        <!-- plateformes -->
+
+        <div class="platform"
+             style="left:450px;bottom:190px;width:220px">
+        </div>
+
+        <div class="platform"
+             style="left:850px;bottom:270px;width:180px">
+        </div>
+
+        <div class="platform"
+             style="left:1200px;bottom:180px;width:250px">
+        </div>
+
+        <div class="platform"
+             style="left:1650px;bottom:250px;width:180px">
+        </div>
+
+        <div class="platform"
+             style="left:2050px;bottom:190px;width:250px">
+        </div>
+
+        <div class="platform"
+             style="left:2500px;bottom:300px;width:200px">
+        </div>
+
+
+        <!-- blocs -->
+
+        <div class="block"
+             style="left:700px;bottom:75px">
+            ?
+        </div>
+
+        <div class="block"
+             style="left:760px;bottom:75px">
+            ?
+        </div>
+
+
+        <!-- pièces -->
+
+        <div class="coin"
+             style="left:500px;bottom:240px">
+            $
+        </div>
+
+        <div class="coin"
+             style="left:560px;bottom:240px">
+            $
+        </div>
+
+        <div class="coin"
+             style="left:620px;bottom:240px">
+            $
+        </div>
+
+        <div class="coin"
+             style="left:900px;bottom:330px">
+            $
+        </div>
+
+        <div class="coin"
+             style="left:960px;bottom:330px">
+            $
+        </div>
+
+        <div class="coin"
+             style="left:1300px;bottom:230px">
+            $
+        </div>
+
+        <div class="coin"
+             style="left:1360px;bottom:230px">
+            $
+        </div>
+
+
+        <!-- ennemis -->
+
+        <div class="enemy"
+             style="left:600px;bottom:75px">
+            👾
+        </div>
+
+        <div class="enemy"
+             style="left:1100px;bottom:75px">
+            👾
+        </div>
+
+        <div class="enemy"
+             style="left:1550px;bottom:75px">
+            👾
+        </div>
+
+        <div class="enemy"
+             style="left:2200px;bottom:75px">
+            👾
+        </div>
+
+
+        <!-- arrivée -->
+
+        <div class="flag"
+             style="left:3100px;bottom:75px">
+        </div>
+
+
+        <!-- joueur -->
+
+        <div id="player"
+             style="left:100px;bottom:75px">
+            🥷
+        </div>
+
     </div>
 
 
-    <div id="obstacle">
-        🪨
+    <!-- contrôles -->
+
+    <div class="controls">
+
+        <div class="leftControls">
+
+            <button
+                class="control"
+                id="left">
+                ◀
+            </button>
+
+            <button
+                class="control"
+                id="right">
+                ▶
+            </button>
+
+        </div>
+
+        <button
+            class="control jump"
+            id="jump">
+            SAUT
+        </button>
+
     </div>
-
-
-    <div id="ground"></div>
-
-
-    <button id="jumpButton">
-        SAUTER
-    </button>
-
 
 </div>
 
 
+<!-- GAME OVER / VICTOIRE -->
 
-<!-- =========================
-     GAME OVER
-========================= -->
+<div id="message" class="hidden">
 
-<div id="gameOver" class="hidden">
+    <h2 id="messageTitle">
+        GAME OVER
+    </h2>
 
-    <h2>GAME OVER</h2>
-
-    <p>
-        Score :
-        <b id="finalScore">0</b>
+    <p id="messageText">
+        Score : 0
     </p>
 
-    <button id="retryButton">
+    <button id="restart">
         REJOUER
     </button>
 
-    <button id="menuButton">
-        MENU
-    </button>
-
 </div>
-
 
 
 <script>
 
 /* =====================================
-   RÉCUPÉRATION DES ÉLÉMENTS
+   ELEMENTS
 ===================================== */
 
 const menu =
-    document.getElementById("menu");
+document.getElementById("menu");
 
 const game =
-    document.getElementById("game");
+document.getElementById("game");
 
-const gameOver =
-    document.getElementById("gameOver");
-
-const playButton =
-    document.getElementById("playButton");
-
-const jumpButton =
-    document.getElementById("jumpButton");
-
-const retryButton =
-    document.getElementById("retryButton");
-
-const menuButton =
-    document.getElementById("menuButton");
+const world =
+document.getElementById("world");
 
 const player =
-    document.getElementById("player");
+document.getElementById("player");
 
-const obstacle =
-    document.getElementById("obstacle");
+const play =
+document.getElementById("play");
+
+const leftButton =
+document.getElementById("left");
+
+const rightButton =
+document.getElementById("right");
+
+const jumpButton =
+document.getElementById("jump");
+
+const message =
+document.getElementById("message");
+
+const messageTitle =
+document.getElementById("messageTitle");
+
+const messageText =
+document.getElementById("messageText");
+
+const restart =
+document.getElementById("restart");
 
 const scoreElement =
-    document.getElementById("score");
+document.getElementById("score");
 
-const bestElement =
-    document.getElementById("best");
+const coinsElement =
+document.getElementById("coins");
 
-const finalScore =
-    document.getElementById("finalScore");
-
-const characters =
-    document.querySelectorAll(".character");
+const livesElement =
+document.getElementById("lives");
 
 
 /* =====================================
    VARIABLES
 ===================================== */
 
-let selectedCharacter = "ninja";
+let x = 100;
+
+let y = 75;
+
+let velocityY = 0;
+
+let velocityX = 0;
+
+let grounded = true;
+
+let cameraX = 0;
 
 let playing = false;
 
+let lives = 3;
+
+let coins = 0;
+
 let score = 0;
 
-let best =
-    Number(localStorage.getItem("jadenBest")) || 0;
+let keys = {
 
-let obstacleX = 0;
+    left:false,
 
-let speed = 7;
+    right:false
 
-let lastTime = 0;
+};
 
+const gravity = 0.8;
 
-/* =====================================
-   RECORD
-===================================== */
+const jumpPower = 15;
 
-bestElement.textContent = best;
+const acceleration = 0.8;
 
+const friction = 0.8;
 
-/* =====================================
-   CHOIX DU PERSONNAGE
-===================================== */
-
-characters.forEach(function(character) {
-
-    character.addEventListener(
-        "click",
-        function() {
-
-            characters.forEach(function(c) {
-
-                c.classList.remove("selected");
-
-            });
-
-
-            character.classList.add("selected");
-
-
-            selectedCharacter =
-                character.dataset.character;
-
-        }
-    );
-
-});
+const maxSpeed = 7;
 
 
 /* =====================================
-   BOUTON JOUER
+   JOUER
 ===================================== */
 
-playButton.addEventListener(
-    "click",
-    function() {
+play.addEventListener(
+"pointerdown",
+function(){
 
-        startGame();
+    startGame();
 
-    }
+}
 );
 
 
-/* =====================================
-   DÉMARRER
-===================================== */
-
-function startGame() {
-
-    console.log("START GAME");
-
-    playing = true;
-
-    score = 0;
-
-    speed = 7;
-
-    obstacleX =
-        window.innerWidth + 100;
-
-
-    scoreElement.textContent = "0";
-
+function startGame(){
 
     menu.classList.add("hidden");
 
     game.classList.remove("hidden");
 
-    gameOver.classList.add("hidden");
+    message.classList.add("hidden");
 
+    x = 100;
 
-    changeCharacter();
+    y = 75;
 
+    velocityY = 0;
 
-    player.classList.remove("jump");
+    velocityX = 0;
 
+    cameraX = 0;
 
-    lastTime =
-        performance.now();
+    lives = 3;
 
+    coins = 0;
 
-    requestAnimationFrame(gameLoop);
+    score = 0;
+
+    grounded = true;
+
+    playing = true;
+
+    updateHUD();
+
+    requestAnimationFrame(loop);
 
 }
 
 
 /* =====================================
-   PERSONNAGE
+   CONTROLES
 ===================================== */
 
-function changeCharacter() {
+function pressLeft(e){
 
-    if (selectedCharacter === "ninja") {
+    e.preventDefault();
 
-        player.textContent = "🥷";
-
-    }
-
-    else if (selectedCharacter === "shadow") {
-
-        player.textContent = "👤";
-
-    }
-
-    else {
-
-        player.textContent = "🔥";
-
-    }
+    keys.left = true;
 
 }
+
+function releaseLeft(e){
+
+    e.preventDefault();
+
+    keys.left = false;
+
+}
+
+
+function pressRight(e){
+
+    e.preventDefault();
+
+    keys.right = true;
+
+}
+
+function releaseRight(e){
+
+    e.preventDefault();
+
+    keys.right = false;
+
+}
+
+
+/* téléphone */
+
+leftButton.addEventListener(
+"pointerdown",
+pressLeft
+);
+
+leftButton.addEventListener(
+"pointerup",
+releaseLeft
+);
+
+leftButton.addEventListener(
+"pointercancel",
+releaseLeft
+);
+
+leftButton.addEventListener(
+"pointerleave",
+releaseLeft
+);
+
+
+rightButton.addEventListener(
+"pointerdown",
+pressRight
+);
+
+rightButton.addEventListener(
+"pointerup",
+releaseRight
+);
+
+rightButton.addEventListener(
+"pointercancel",
+releaseRight
+);
+
+rightButton.addEventListener(
+"pointerleave",
+releaseRight
+);
 
 
 /* =====================================
    SAUT
 ===================================== */
 
-function jump() {
+function jump(){
 
-    if (!playing) {
-        return;
+    if(!playing) return;
+
+    if(grounded){
+
+        velocityY = jumpPower;
+
+        grounded = false;
+
     }
 
+}
 
-    if (player.classList.contains("jump")) {
-        return;
+
+jumpButton.addEventListener(
+"pointerdown",
+function(e){
+
+    e.preventDefault();
+
+    jump();
+
+}
+);
+
+
+/* =====================================
+   CLAVIER PC
+===================================== */
+
+document.addEventListener(
+"keydown",
+function(e){
+
+    if(e.key === "ArrowLeft")
+        keys.left = true;
+
+    if(e.key === "ArrowRight")
+        keys.right = true;
+
+    if(
+        e.key === " " ||
+        e.key === "ArrowUp"
+    ){
+
+        e.preventDefault();
+
+        jump();
+
     }
 
+}
+);
 
-    player.classList.add("jump");
+
+document.addEventListener(
+"keyup",
+function(e){
+
+    if(e.key === "ArrowLeft")
+        keys.left = false;
+
+    if(e.key === "ArrowRight")
+        keys.right = false;
+
+}
+);
 
 
-    setTimeout(function() {
+/* =====================================
+   PLATEFORMES
+===================================== */
 
-        player.classList.remove("jump");
+function getPlatforms(){
 
-    }, 650);
+    return [
+
+        {
+            x:450,
+            y:190,
+            w:220,
+            h:28
+        },
+
+        {
+            x:850,
+            y:270,
+            w:180,
+            h:28
+        },
+
+        {
+            x:1200,
+            y:180,
+            w:250,
+            h:28
+        },
+
+        {
+            x:1650,
+            y:250,
+            w:180,
+            h:28
+        },
+
+        {
+            x:2050,
+            y:190,
+            w:250,
+            h:28
+        },
+
+        {
+            x:2500,
+            y:300,
+            w:200,
+            h:28
+        }
+
+    ];
 
 }
 
 
 /* =====================================
-   BOUTON SAUT
+   COLLISION PLATEFORMES
 ===================================== */
 
-jumpButton.addEventListener(
-    "click",
-    function(event) {
+function updatePhysics(){
 
-        event.preventDefault();
+    const oldY = y;
 
-        jump();
+    velocityY -= gravity;
+
+    y += velocityY;
+
+    grounded = false;
+
+
+    /* sol */
+
+    if(y <= 75){
+
+        y = 75;
+
+        velocityY = 0;
+
+        grounded = true;
 
     }
-);
 
 
-/* =====================================
-   CLAVIER
-===================================== */
+    /* plateformes */
 
-document.addEventListener(
-    "keydown",
-    function(event) {
+    const platforms =
+    getPlatforms();
 
-        if (
-            event.code === "Space" ||
-            event.code === "ArrowUp"
-        ) {
 
-            event.preventDefault();
+    for(const p of platforms){
 
-            jump();
+        const playerLeft = x;
+
+        const playerRight = x + 55;
+
+        const oldBottom = oldY;
+
+        const newBottom = y;
+
+
+        if(
+
+            playerRight > p.x &&
+
+            playerLeft < p.x + p.w &&
+
+            oldBottom >= p.y &&
+
+            newBottom <= p.y
+
+        ){
+
+            y = p.y;
+
+            velocityY = 0;
+
+            grounded = true;
 
         }
 
     }
-);
+
+}
+
+
+/* =====================================
+   ENNEMIS
+===================================== */
+
+const enemies = [
+
+    {
+        x:600,
+        y:75,
+        alive:true
+    },
+
+    {
+        x:1100,
+        y:75,
+        alive:true
+    },
+
+    {
+        x:1550,
+        y:75,
+        alive:true
+    },
+
+    {
+        x:2200,
+        y:75,
+        alive:true
+    }
+
+];
+
+
+function checkEnemies(){
+
+    for(const enemy of enemies){
+
+        if(!enemy.alive)
+            continue;
+
+
+        const dx =
+        Math.abs(x - enemy.x);
+
+        const dy =
+        Math.abs(y - enemy.y);
+
+
+        if(dx < 55 && dy < 55){
+
+            /* saute dessus */
+
+            if(velocityY < 0 && y > enemy.y + 25){
+
+                enemy.alive = false;
+
+                velocityY = jumpPower * .7;
+
+                score += 100;
+
+            }
+
+            else{
+
+                loseLife();
+
+            }
+
+        }
+
+    }
+
+}
+
+
+/* =====================================
+   PIECES
+===================================== */
+
+const coinsList = [
+
+    {x:500,y:240,taken:false},
+
+    {x:560,y:240,taken:false},
+
+    {x:620,y:240,taken:false},
+
+    {x:900,y:330,taken:false},
+
+    {x:960,y:330,taken:false},
+
+    {x:1300,y:230,taken:false},
+
+    {x:1360,y:230,taken:false}
+
+];
+
+
+function checkCoins(){
+
+    for(const coin of coinsList){
+
+        if(coin.taken)
+            continue;
+
+
+        if(
+
+            Math.abs(x - coin.x) < 40 &&
+
+            Math.abs(y - coin.y) < 55
+
+        ){
+
+            coin.taken = true;
+
+            coins++;
+
+            score += 50;
+
+            coinsElement.textContent =
+            coins;
+
+            /* cacher la pièce */
+
+            const elements =
+            document.querySelectorAll(".coin");
+
+            for(const el of elements){
+
+                const left =
+                parseInt(el.style.left);
+
+                if(
+                    Math.abs(left - coin.x) < 2
+                ){
+
+                    el.style.display =
+                    "none";
+
+                    break;
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
+
+/* =====================================
+   VIE
+===================================== */
+
+function loseLife(){
+
+    lives--;
+
+    updateHUD();
+
+
+    if(lives <= 0){
+
+        endGame(false);
+
+        return;
+
+    }
+
+
+    x = Math.max(
+        100,
+        x - 250
+    );
+
+    y = 75;
+
+    velocityY = 0;
+
+}
+
+
+/* =====================================
+   FIN
+===================================== */
+
+function endGame(win){
+
+    playing = false;
+
+    message.classList.remove("hidden");
+
+
+    if(win){
+
+        messageTitle.textContent =
+        "🏆 NIVEAU TERMINÉ !";
+
+        messageText.textContent =
+        "Score : " + Math.floor(score);
+
+    }
+
+    else{
+
+        messageTitle.textContent =
+        "GAME OVER";
+
+        messageText.textContent =
+        "Score : " + Math.floor(score);
+
+    }
+
+}
+
+
+/* =====================================
+   HUD
+===================================== */
+
+function updateHUD(){
+
+    livesElement.textContent =
+    lives;
+
+    coinsElement.textContent =
+    coins;
+
+    scoreElement.textContent =
+    Math.floor(score);
+
+}
+
+
+/* =====================================
+   CAMERA
+===================================== */
+
+function updateCamera(){
+
+    const screenWidth =
+    window.innerWidth;
+
+
+    cameraX =
+    x - screenWidth * .35;
+
+
+    if(cameraX < 0)
+        cameraX = 0;
+
+
+    if(cameraX > 5000 - screenWidth)
+        cameraX = 5000 - screenWidth;
+
+
+    world.style.transform =
+    "translateX(" + (-cameraX) + "px)";
+
+
+}
+
+
+/* =====================================
+   JOUEUR
+===================================== */
+
+function updatePlayer(){
+
+    player.style.left =
+    x + "px";
+
+    player.style.bottom =
+    y + "px";
+
+}
+
+
+/* =====================================
+   DEPLACEMENT
+===================================== */
+
+function updateMovement(){
+
+    if(keys.left){
+
+        velocityX -= acceleration;
+
+    }
+
+    if(keys.right){
+
+        velocityX += acceleration;
+
+    }
+
+
+    if(!keys.left && !keys.right){
+
+        velocityX *= friction;
+
+    }
+
+
+    velocityX =
+    Math.max(
+        -maxSpeed,
+        Math.min(maxSpeed,velocityX)
+    );
+
+
+    x += velocityX;
+
+
+    if(x < 0)
+        x = 0;
+
+
+    if(x > 4900)
+        x = 4900;
+
+}
 
 
 /* =====================================
    BOUCLE
 ===================================== */
 
-function gameLoop(time) {
+function loop(){
 
-    if (!playing) {
+    if(!playing)
         return;
-    }
 
 
-    let delta =
-        time - lastTime;
+    updateMovement();
+
+    updatePhysics();
+
+    checkEnemies();
+
+    checkCoins();
+
+    updatePlayer();
+
+    updateCamera();
+
+    score += .05;
+
+    updateHUD();
 
 
-    lastTime = time;
+    /* arrivée */
 
+    if(x >= 3000){
 
-    /* déplacement */
-
-    obstacleX -=
-        speed * (delta / 16.67);
-
-
-    obstacle.style.left =
-        obstacleX + "px";
-
-
-    /* nouvel obstacle */
-
-    if (obstacleX < -100) {
-
-        obstacleX =
-            window.innerWidth +
-            150 +
-            Math.random() * 300;
-
-    }
-
-
-    /* score */
-
-    score +=
-        delta * 0.01;
-
-
-    let currentScore =
-        Math.floor(score);
-
-
-    scoreElement.textContent =
-        currentScore;
-
-
-    /* difficulté */
-
-    speed =
-        Math.min(
-            15,
-            7 + currentScore * 0.025
-        );
-
-
-    /* collision */
-
-    if (checkCollision()) {
-
-        endGame();
+        endGame(true);
 
         return;
 
     }
 
 
-    requestAnimationFrame(gameLoop);
-
-}
-
-
-/* =====================================
-   COLLISION
-===================================== */
-
-function checkCollision() {
-
-    let p =
-        player.getBoundingClientRect();
-
-    let o =
-        obstacle.getBoundingClientRect();
-
-
-    let margin = 15;
-
-
-    return (
-
-        p.right - margin > o.left &&
-
-        p.left + margin < o.right &&
-
-        p.bottom - margin > o.top &&
-
-        p.top + margin < o.bottom
-
-    );
-
-}
-
-
-/* =====================================
-   GAME OVER
-===================================== */
-
-function endGame() {
-
-    playing = false;
-
-
-    let final =
-        Math.floor(score);
-
-
-    finalScore.textContent =
-        final;
-
-
-    if (final > best) {
-
-        best = final;
-
-        localStorage.setItem(
-            "jadenBest",
-            best
-        );
-
-        bestElement.textContent =
-            best;
-
-    }
-
-
-    gameOver.classList.remove("hidden");
+    requestAnimationFrame(loop);
 
 }
 
@@ -1106,33 +1435,13 @@ function endGame() {
    REJOUER
 ===================================== */
 
-retryButton.addEventListener(
-    "click",
-    function() {
+restart.addEventListener(
+"pointerdown",
+function(){
 
-        startGame();
+    startGame();
 
-    }
-);
-
-
-/* =====================================
-   MENU
-===================================== */
-
-menuButton.addEventListener(
-    "click",
-    function() {
-
-        playing = false;
-
-        game.classList.add("hidden");
-
-        gameOver.classList.add("hidden");
-
-        menu.classList.remove("hidden");
-
-    }
+}
 );
 
 </script>
